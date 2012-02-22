@@ -1043,9 +1043,8 @@ status_t AudioHardware::AudioStreamInALSA::set(
         return BAD_VALUE;
     }
 
-    if (pChannels == 0 || (*pChannels != AudioSystem::CHANNEL_IN_MONO &&
-        *pChannels != AudioSystem::CHANNEL_IN_STEREO)) {
-        *pChannels = AUDIO_HW_IN_CHANNELS;
+    if (pChannels == 0 || ( *pChannels != AudioSystem::CHANNEL_IN_STEREO)) {
+        *pChannels = AudioSystem::CHANNEL_IN_STEREO ;
         return BAD_VALUE;
     }
 
