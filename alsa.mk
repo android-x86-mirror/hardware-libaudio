@@ -45,9 +45,11 @@ PRODUCT_COPY_FILES := \
 	$(foreach f,$(copy_init),$(LOCAL_ALSA_INIT_DIR)/$(f):$(TARGET_ALSA_CONF_DIR)/init/$(f))
 
 PRODUCT_PACKAGES := \
+	alsa_amixer \
+	alsa_aplay \
+	alsa_ctl \
 	audio.primary.$(TARGET_PRODUCT) \
 	audio_policy.$(TARGET_PRODUCT) \
 	audio.primary.default \
 	audio.a2dp.default \
 	audio_policy.default \
-	alsa_ctl \
