@@ -107,7 +107,6 @@ struct audio_device {
     bool standby;
     bool mic_mute;
     struct audio_route *ar;
-    int orientation;
     bool screen_off;
 
     struct stream_out *active_out;
@@ -150,13 +149,6 @@ struct stream_in {
     int read_status;
 
     struct audio_device *dev;
-};
-
-enum {
-    ORIENTATION_LANDSCAPE,
-    ORIENTATION_PORTRAIT,
-    ORIENTATION_SQUARE,
-    ORIENTATION_UNDEFINED,
 };
 
 static uint32_t out_get_sample_rate(const struct audio_stream *stream);
@@ -281,12 +273,8 @@ static void select_devices(struct audio_device *adev)
         audio_route_apply_path(adev->ar, "headphone");
     if (docked)
         audio_route_apply_path(adev->ar, "dock");
-    if (main_mic_on) {
-        if (adev->orientation == ORIENTATION_LANDSCAPE)
-            audio_route_apply_path(adev->ar, "main-mic-left");
-        else
-            audio_route_apply_path(adev->ar, "main-mic-top");
-    }
+    if (main_mic_on)
+        audio_route_apply_path(adev->ar, "main-mic");
 
     update_mixer_state(adev->ar);
 
@@ -1138,33 +1126,6 @@ static int adev_set_parameters(struct audio_hw_device *dev, const char *kvpairs)
     int ret;
 
     parms = str_parms_create_str(kvpairs);
-    ret = str_parms_get_str(parms, "orientation", value, sizeof(value));
-    if (ret >= 0) {
-        int orientation;
-
-        if (strcmp(value, "landscape") == 0)
-            orientation = ORIENTATION_LANDSCAPE;
-        else if (strcmp(value, "portrait") == 0)
-            orientation = ORIENTATION_PORTRAIT;
-        else if (strcmp(value, "square") == 0)
-            orientation = ORIENTATION_SQUARE;
-        else
-            orientation = ORIENTATION_UNDEFINED;
-
-        pthread_mutex_lock(&adev->lock);
-        if (orientation != adev->orientation) {
-            adev->orientation = orientation;
-            /*
-             * Orientation changes can occur with the input device
-             * closed so we must call select_devices() here to set
-             * up the mixer. This is because select_devices() will
-             * not be called when the input device is opened if no
-             * other input parameter is changed.
-             */
-            select_devices(adev);
-        }
-        pthread_mutex_unlock(&adev->lock);
-    }
 
     ret = str_parms_get_str(parms, "screen_state", value, sizeof(value));
     if (ret >= 0) {
@@ -1348,7 +1309,7 @@ static int adev_open(const hw_module_t* module, const char* name,
     adev->hw_device.dump = adev_dump;
 
     adev->ar = audio_route_init();
-    adev->orientation = ORIENTATION_UNDEFINED;
+
     adev->out_device = AUDIO_DEVICE_OUT_SPEAKER;
     adev->in_device = AUDIO_DEVICE_IN_BUILTIN_MIC & ~AUDIO_DEVICE_BIT_IN;
 
