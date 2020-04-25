@@ -258,12 +258,14 @@ static void select_devices(struct audio_device *adev)
     int speaker_on;
     int docked;
     int main_mic_on;
+    int headset_mic_on;
 
     headphone_on = adev->out_device & (AUDIO_DEVICE_OUT_WIRED_HEADSET |
                                     AUDIO_DEVICE_OUT_WIRED_HEADPHONE);
     speaker_on = adev->out_device & AUDIO_DEVICE_OUT_SPEAKER;
     docked = adev->out_device & AUDIO_DEVICE_OUT_ANLG_DOCK_HEADSET;
     main_mic_on = adev->in_device & AUDIO_DEVICE_IN_BUILTIN_MIC;
+    headset_mic_on = adev->in_device & AUDIO_DEVICE_IN_WIRED_HEADSET;
 
     reset_mixer_state(adev->ar);
 
@@ -275,11 +277,13 @@ static void select_devices(struct audio_device *adev)
         audio_route_apply_path(adev->ar, "dock");
     if (main_mic_on)
         audio_route_apply_path(adev->ar, "main-mic");
+    if (headset_mic_on)
+        audio_route_apply_path(adev->ar, "headset-mic");
 
     update_mixer_state(adev->ar);
 
-    ALOGV("hp=%c speaker=%c dock=%c main-mic=%c", headphone_on ? 'y' : 'n',
-          speaker_on ? 'y' : 'n', docked ? 'y' : 'n', main_mic_on ? 'y' : 'n');
+    ALOGV("hp=%c speaker=%c dock=%c main-mic=%c headset-mic=%c", headphone_on ? 'y' : 'n',
+          speaker_on ? 'y' : 'n', docked ? 'y' : 'n', main_mic_on ? 'y' : 'n', headset_mic_on ? 'y' : 'n');
 }
 
 /* must be called with hw device and output stream mutexes locked */
