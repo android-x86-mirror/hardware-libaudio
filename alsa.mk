@@ -13,27 +13,32 @@ LOCAL_ALSA_CONF_DIR  := external/alsa-lib/src/conf
 
 copy_conf := \
 	alsa.conf \
-	pcm/dsnoop.conf \
-	pcm/modem.conf \
-	pcm/dpl.conf \
+	cards/aliases.conf \
+	ctl/default.conf \
+	pcm/center_lfe.conf \
 	pcm/default.conf \
-	pcm/surround51.conf \
+	pcm/dmix.conf \
+	pcm/dpl.conf \
+	pcm/dsnoop.conf \
+	pcm/front.conf \
+	pcm/hdmi.conf \
+	pcm/iec958.conf \
+	pcm/modem.conf \
+	pcm/rear.conf \
+	pcm/side.conf \
+	pcm/surround21.conf \
+	pcm/surround40.conf \
 	pcm/surround41.conf \
 	pcm/surround50.conf \
-	pcm/dmix.conf \
-	pcm/center_lfe.conf \
-	pcm/surround40.conf \
-	pcm/side.conf \
-	pcm/iec958.conf \
-	pcm/rear.conf \
+	pcm/surround51.conf \
 	pcm/surround71.conf \
-	pcm/front.conf \
-	cards/aliases.conf
+	smixer.conf \
 
 LOCAL_ALSA_INIT_DIR  := external/alsa-utils/alsactl/init
 
 copy_init := \
 	00main \
+	ca0106 \
 	default \
 	hda \
 	help \
@@ -46,6 +51,7 @@ PRODUCT_COPY_FILES := \
 	$(if $(wildcard $(PRODUCT_DIR)audio_policy.conf),$(PRODUCT_DIR),$(LOCAL_PATH)/)audio_policy.conf:system/etc/audio_policy.conf \
 
 PRODUCT_PACKAGES := \
+	alsa_alsamixer \
 	alsa_amixer \
 	alsa_aplay \
 	alsa_ctl \
