@@ -45,9 +45,21 @@ copy_init := \
 	info \
 	test
 
+LOCAL_ALSA_UCM_DIR := external/alsa-ucm-conf
+
+excluded_ucm := \
+	codecs/qcom-lpass/% \
+	OMAP/% \
+	Qualcomm/% \
+	README.md \
+	Rockchip/% \
+	Samsung/% \
+	Tegra/% \
+
 PRODUCT_COPY_FILES := \
 	$(foreach f,$(copy_conf),$(LOCAL_ALSA_CONF_DIR)/$(f):$(TARGET_ALSA_CONF_DIR)/$(f)) \
 	$(foreach f,$(copy_init),$(LOCAL_ALSA_INIT_DIR)/$(f):$(TARGET_ALSA_CONF_DIR)/init/$(f)) \
+	$(foreach f,$(filter-out $(addprefix ucm2/,$(excluded_ucm)),$(shell cd $(LOCAL_ALSA_UCM_DIR) && find ucm2 -type f)),$(LOCAL_ALSA_UCM_DIR)/$(f):$(TARGET_ALSA_CONF_DIR)/$(f)) \
 	$(if $(wildcard $(PRODUCT_DIR)audio_policy.conf),$(PRODUCT_DIR),$(LOCAL_PATH)/)audio_policy.conf:system/etc/audio_policy.conf \
 
 PRODUCT_PACKAGES := \
